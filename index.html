@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Aspect Ratio Player</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            background: #000;
+        }
+
+        #player-container {
+            flex-grow: 1;
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+            height: 100%;
+        }
+
+        #youtube-player {
+            width: 100%;
+            height: 100%;
+            transition: transform 0.3s ease;
+        }
+
+        #controls {
+            padding: 10px;
+            background: #333;
+            text-align: center;
+        }
+
+        button {
+            padding: 8px 16px;
+            margin: 0 5px;
+            cursor: pointer;
+            background: #555;
+            color: white;
+            border: none;
+            border-radius: 4px;
+        }
+
+        button:hover {
+            background: #777;
+        }
+
+        #url-input {
+            padding: 8px;
+            width: 300px;
+            margin: 0 5px;
+            border: none;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div id="player-container">
+        <iframe id="youtube-player" 
+                src="https://www.youtube.com/embed/dQw4w9WgXcQ?enablejsapi=1" 
+                frameborder="0" 
+                allowfullscreen></iframe>
+    </div>
+    <div id="controls">
+        <input type="text" id="url-input" placeholder="Enter YouTube URL">
+        <button onclick="loadVideo()">Load Video</button>
+        <button onclick="setAspectRatio(16/9)">16:9</button>
+        <button onclick="setAspectRatio(4/3)">4:3</button>
+        <button onclick="resetAspectRatio()">Reset</button>
+    </div>
+
+    <script>
+        const player = document.getElementById('youtube-player');
+        const urlInput = document.getElementById('url-input');
+        let originalScaleX = 1;
+        let originalScaleY = 1;
+
+        // Initialize YouTube API
+        const tag = document.createElement('script');
+        tag.src = "https://www.youtube.com/iframe_api";
+        const firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+        let ytPlayer;
+        function onYouTubeIframeAPIReady() {
+            ytPlayer = new YT.Player('youtube-player', {
+                events: {
+                    'onReady': onPlayerReady
+                }
+            });
+        }
+
+        function onPlayerReady(event) {
+            // Player is ready
+        }
+
+        function setAspectRatio(ratio) {
+            let scaleX, scaleY;
+            if (ratio === 16/9) {
+                // For 16:9, stretch from 4:3 if needed
+                scaleX = 1;           // Default width
+                scaleY = 1;           // Default height
+            } else if (ratio === 4/3) {
+                // For 4:3, compress width from 16:9
+                scaleX = 0.75;        // 4/3 / 16/9 = 0.75
+                scaleY = 1;
+            }
+            player.style.transform = `scaleX(${scaleX}) scaleY(${scaleY})`;
+        }
+
+        function resetAspectRatio() {
+            player.style.transform = `scaleX(${originalScaleX}) scaleY(${originalScaleY})`;
+        }
+
+        function getVideoId(url) {
+            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+            const match = url.match(regExp);
+            return (match && match[2].length === 11) ? match[2] : null;
+        }
+
+        function loadVideo() {
+            const url = urlInput.value.trim();
+            const videoId = getVideoId(url);
+            
+            if (videoId) {
+                player.src = `https://www.youtube.com/embed/${videoId}?enablejsapi=1`;
+                // Reset to default ratio when loading new video
+                originalScaleX = 1;
+                originalScaleY = 1;
+                resetAspectRatio();
+            } else {
+                alert('Please enter a valid YouTube URL');
+            }
+        }
+
+        // Handle Enter key press in input
+        urlInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                loadVideo();
+            }
+        });
+
+        // Initial setup
+        window.addEventListener('load', () => {
+            resetAspectRatio();
+        });
+    </script>
+</body>
+</html>
