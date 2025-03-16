@@ -2,7 +2,7 @@
 
 The YouTube Aspect Ratio Player is a web-based tool that empowers users to adjust the aspect ratio of YouTube videos, ensuring they display optimally by stretching or compressing them to fit specific ratios while filling the browser window. Unlike the standard YouTube player, which locks videos into a fixed 16:9 ratio regardless of their original dimensions, this tool offers flexibility with 16:9 (widescreen) and 4:3 (traditional TV format) options, cropping excess content as needed.
 
-[Youtube-Video-Ratio-Stracher is Online!](https://abdelhaqueidali.github.io/Youtube-Video-Ratio-Stracher/), this player addresses the common issue of mismatched aspect ratios in video playback.
+[Youtube-Video-Ratio-Stracher is Online!](https://abdelhaqueidali.github.io/Youtube-Video-Ratio-Strecher/), this player addresses the common issue of mismatched aspect ratios in video playback.
 
 ## Features
 
