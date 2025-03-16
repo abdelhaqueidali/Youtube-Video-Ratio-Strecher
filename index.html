@@ -21,23 +21,30 @@
             overflow: hidden;
             width: 100%;
             height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         #youtube-player {
             width: 100%;
             height: 100%;
             transition: transform 0.3s ease;
+            position: absolute;
+            top: 0;
+            left: 0;
         }
 
         #controls {
             padding: 10px;
             background: #333;
             text-align: center;
+            color: white;
         }
 
         button {
             padding: 8px 16px;
-            margin: 0 5px;
+            margin: 2px 5px;
             cursor: pointer;
             background: #555;
             color: white;
@@ -56,6 +63,15 @@
             border: none;
             border-radius: 4px;
         }
+
+        .slider-container {
+            margin: 10px 0;
+        }
+
+        input[type="range"] {
+            width: 200px;
+            margin: 0 10px;
+        }
     </style>
 </head>
 <body>
@@ -66,16 +82,28 @@
                 allowfullscreen></iframe>
     </div>
     <div id="controls">
-        <input type="text" id="url-input" placeholder="Enter YouTube URL">
-        <button onclick="loadVideo()">Load Video</button>
-        <button onclick="setAspectRatio(16/9)">16:9</button>
-        <button onclick="setAspectRatio(4/3)">4:3</button>
-        <button onclick="resetAspectRatio()">Reset</button>
+        <div>
+            <input type="text" id="url-input" placeholder="Enter YouTube URL">
+            <button onclick="loadVideo()">Load Video</button>
+        </div>
+        <div>
+            <button onclick="setAspectRatio(16/9)">16:9</button>
+            <button onclick="setAspectRatio(4/3)">4:3</button>
+            <button onclick="resetAspectRatio()">Reset</button>
+            <button onclick="toggleFullscreen()">Fullscreen</button>
+        </div>
+        <div class="slider-container">
+            Width: <input type="range" id="width-slider" min="0.1" max="2" step="0.01" value="1">
+            Height: <input type="range" id="height-slider" min="0.1" max="2" step="0.01" value="1">
+        </div>
     </div>
 
     <script>
         const player = document.getElementById('youtube-player');
+        const playerContainer = document.getElementById('player-container');
         const urlInput = document.getElementById('url-input');
+        const widthSlider = document.getElementById('width-slider');
+        const heightSlider = document.getElementById('height-slider');
         let originalScaleX = 1;
         let originalScaleY = 1;
 
@@ -95,25 +123,33 @@
         }
 
         function onPlayerReady(event) {
-            // Player is ready
+            updateTransform();
+        }
+
+        function updateTransform() {
+            const scaleX = widthSlider.value;
+            const scaleY = heightSlider.value;
+            player.style.transform = `scaleX(${scaleX}) scaleY(${scaleY})`;
         }
 
         function setAspectRatio(ratio) {
             let scaleX, scaleY;
             if (ratio === 16/9) {
-                // For 16:9, stretch from 4:3 if needed
-                scaleX = 1;           // Default width
-                scaleY = 1;           // Default height
+                scaleX = 1;
+                scaleY = 1;
             } else if (ratio === 4/3) {
-                // For 4:3, compress width from 16:9
-                scaleX = 0.75;        // 4/3 / 16/9 = 0.75
+                scaleX = 0.75;
                 scaleY = 1;
             }
-            player.style.transform = `scaleX(${scaleX}) scaleY(${scaleY})`;
+            widthSlider.value = scaleX;
+            heightSlider.value = scaleY;
+            updateTransform();
         }
 
         function resetAspectRatio() {
-            player.style.transform = `scaleX(${originalScaleX}) scaleY(${originalScaleY})`;
+            widthSlider.value = originalScaleX;
+            heightSlider.value = originalScaleY;
+            updateTransform();
         }
 
         function getVideoId(url) {
@@ -128,7 +164,6 @@
             
             if (videoId) {
                 player.src = `https://www.youtube.com/embed/${videoId}?enablejsapi=1`;
-                // Reset to default ratio when loading new video
                 originalScaleX = 1;
                 originalScaleY = 1;
                 resetAspectRatio();
@@ -137,10 +172,30 @@
             }
         }
 
-        // Handle Enter key press in input
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                playerContainer.requestFullscreen().then(() => {
+                    updateTransform();
+                });
+            } else {
+                document.exitFullscreen();
+            }
+        }
+
+        // Event listeners
+        widthSlider.addEventListener('input', updateTransform);
+        heightSlider.addEventListener('input', updateTransform);
+        
         urlInput.addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 loadVideo();
+            }
+        });
+
+        // Handle fullscreen change
+        document.addEventListener('fullscreenchange', () => {
+            if (document.fullscreenElement) {
+                updateTransform();
             }
         });
 
