@@ -15,6 +15,6 @@ The YouTube Aspect Ratio Player is a web-based tool that empowers users to adjus
 
 ## How It Works
 
-The tool uses a simple interface where you paste a YouTube URL into an input field to load a video. Once loaded, buttons allow you to toggle between 16:9 and 4:3 aspect ratios or reset to the default. The video content scales dynamically using CSS `transform: scaleX()` and `scaleY()`, a technique inspired by Idali’s project, ensuring the video stretches or compresses to the selected ratio. The container’s `overflow: hidden` property handles cropping, keeping the video maximized within the browser window.
+The tool uses a simple interface where you paste a YouTube URL into an input field to load a video. Once loaded, buttons allow you to toggle between 16:9 and 4:3 aspect ratios or reset to the default. The video content scales dynamically using CSS `transform: scaleX()` and `scaleY()`, a technique, ensuring the video stretches or compresses to the selected ratio. The container’s `overflow: hidden` property handles cropping, keeping the video maximized within the browser window.
 
 Built with HTML, CSS, and JavaScript, it leverages the [YouTube IFrame Player API](https://developers.google.com/youtube/iframe_api_reference) for video embedding and control. This approach enhances the simplicity and effectiveness seen in [Youtube-Video-Ratio-Stracher](https://github.com/abdelhaqueidali/Youtube-Video-Ratio-Stracher), adding a custom UI, reset functionality, and improved usability features.
